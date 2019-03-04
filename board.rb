@@ -41,10 +41,51 @@ class Board
     line.map{|c|c == 1 ? '# ' : '. '}.join
   end
 
+  def shift(counter)
+    counter.reverse.each_with_index do |r, index|
+      if r != 9
+        counter[counter.length-1] = 0
+        counter[counter.length-index-1] = r + 1
+        break
+      else
+        counter[counter.length-index-1] = 0
+      end
+    end
+    @counter = counter
+  end
+
+  def increment
+    @counter = [0,0,0,0,0,0,0,0,0,0,0]
+
+    (1..250).each do
+      current = @counter.last
+
+      if current != 9
+        @counter[@counter.length-1] = current + 1
+      else
+        shift(@counter)
+      end
+
+      #@counter[@counter.length-1] = 0
+      #c2 = @counter[@counter.length-2]
+      #@counter[@counter.length-2] = c2 + 1
+      puts @counter.inspect
+    end
+
+
+    #@counter.last = @counter.last + 1
+  end
+
   def assemble(total)
     counts = total.map {|_, value| value.count - 1}
-    abort counts.inject(&:*).inspect
+    #abort counts.inject(&:*).inspect
     
+    #counts.each do |row|
+      increment
+    #end
+
+    abort 1.inspect
+
     set = []
     collection = {}
 
@@ -98,10 +139,16 @@ class Board
   end
 end
 
+trap("INT") do
+  File.write('iteration', rand(1..100))
+  exit
+end
+
 b = Board.new
 b.x = [[3],[1,1],[1,1,1],[2,1],[1,5],[1,1,1],[1,3,1],[2,2],[7],[1,1]]
 b.y = [[1],[7],[1,2],[1,1,1],[1,2],[4,1,1],[1,1,2],[3,1],[1,2],[4]]
 b.brute
+
 
 #b.demo
 #b.sample
